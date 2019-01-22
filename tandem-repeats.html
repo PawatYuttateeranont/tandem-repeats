@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>tandem-repeats</title>
+</head>
+<body>
+
+	<h1>tandem-repeats</h1>
+	
+	<hr>
+
+	<h3>Input</h3>
+	<input type="text" id="input">
+	<button onclick="findTandemRepeat()">Find Tamdem Repeats</button>
+	<hr>
+
+	<h3>Result</h3>
+	<p id="result"></p>
+
+
+</body>
+</html>
+
+<script type="text/javascript">
+	function findTandemRepeat () {
+		var string = document.getElementById("input").value
+		
+		var steps = [3,4,5,6,7,8,9,10]
+
+		/* format data */
+		var cleanData = []
+		steps.forEach(
+			function(step) {
+	  			for(var index = 0; index < string.length; index++) {
+	  				if (index < step) {
+	    				for (var shift = 0; shift+index < string.length; shift += step) {
+	    			    	var substring = string.substring(shift+index, shift+step+index)
+	    			    	if (substring.length === step) {
+	    		        		cleanData.push(string.substring(shift+index, shift+step+index))
+	    			    	}
+	    				}
+	    			}
+	  			}
+	  		}
+		)
+		
+		/* find duplicate match */
+		var duplicateMatch = []
+		for (i = 0; i < cleanData.length; i++) {
+			if (cleanData[i] === cleanData[i+1]) {
+		  	duplicateMatch.push(cleanData[i])
+		  }
+		
+		}
+
+		/* find number of repeats */
+		var count = {}
+		duplicateMatch.forEach(function(i) { count[i] = (count[i]||1) + 1;})
+		
+	
+		if (!isEmpty(count)) {
+			/* find sub string */
+			var subString = Object.keys(count).reduce((a, b) => count[a] > count[b] ? a : b)
+
+			/* find index*/
+			var tandemString = repeatString(subString,count[subString])
+			var index = string.indexOf(tandemString)
+	
+			/* format output */
+			var resultObject = {}
+			resultObject[index + '-' + subString] = count[subString]
+	
+			document.getElementById("result").innerHTML = JSON.stringify(resultObject)
+			console.log(resultObject)
+			return resultObject
+		} else {
+			document.getElementById("result").innerHTML = 'No Tandem Repeats'
+			return {}
+		}
+
+	}
+	
+	
+	function repeatString (string, times) {
+		result = ''
+		for (i = 0; i < times; i++) {
+	  	result += string
+	  }
+	  return result
+	}
+
+	function isEmpty(object) {
+    for(var key in object) {
+        if(object.hasOwnProperty(key))
+            return false
+    }
+    return true
+}
+	
+
+	
+	
+</script>
